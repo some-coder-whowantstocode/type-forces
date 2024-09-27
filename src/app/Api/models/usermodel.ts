@@ -1,0 +1,4 @@
+interface SignupResponse {
+    success:boolean,
+    
+}
