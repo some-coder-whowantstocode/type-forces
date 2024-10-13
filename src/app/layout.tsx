@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+'use client'
+import {metadata} from './metadata'
 import "./globals.css";
+import { Provider } from "react-redux";
+import { makeStore } from "@/lib/store";
 
-export const metadata: Metadata = {
-  title: "type-forces",
-  description: "Practice and get better",
-};
+
+const store = makeStore();
 
 export default function RootLayout({
   children,
@@ -14,7 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body >
+        <Provider store={store}>
         {children}
+        </Provider>
       </body>
     </html>
   );

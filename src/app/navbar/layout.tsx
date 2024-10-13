@@ -1,6 +1,9 @@
 import React, {ReactNode, useEffect, useState, useRef} from 'react'
 import {Navbar, Logo, Locations, Settings, LocationBackground} from './navbarstyle.jsx'
 import { useRouter, usePathname } from 'next/navigation';
+import { useDispatch, useSelector } from 'react-redux';
+import { pagesliceval, updatePage } from '../../lib/features/pageSlice';
+import { RootState } from '../../lib/store.js';
 
 interface LayoutProps {
     children: ReactNode;
@@ -8,6 +11,7 @@ interface LayoutProps {
 
 
 const layout : React.FC<LayoutProps> = ({children}) => {
+    const {currentPage, prevPage, locations} : pagesliceval = useSelector((state : RootState)=>state.page);
     const router = useRouter();
     const path = usePathname();
 
@@ -15,34 +19,28 @@ const layout : React.FC<LayoutProps> = ({children}) => {
     const locationbgref = useRef(null);
     const currentpageref = useRef("");
 
-    const locations = [
-        {name:'compete', location:'/compete'},
-        {name:'practice', location:'/practice'},
-    ]
+    const dispatch = useDispatch();
+
+    useEffect(()=>{
+        dispatch(updatePage(path));
+    },[])
+
 
     useEffect(()=>{
         try {
             const providelocation =()=>{
-                if(!locationbgref.current || !locationref.current) return;
-                let index = 0, previndex = 1;
+                if(!locationbgref.current || !locationref.current || path !== locations[currentPage]?.location) return;
                 const padding =  5;
-                
-                if(path){
-                    locations.map(({location},i)=>{
-                        if(path === location) index = i;
-                        if(currentpageref.current === location) previndex = i;
-                    })
-                }
-                console.log(path, currentpageref.current)
+
                 currentpageref.current = path;                
-                const prevlocation = ((locationref.current as HTMLElement).children[previndex] as HTMLElement).getBoundingClientRect();
+                const prevlocation = ((locationref.current as HTMLElement).children[prevPage] as HTMLElement).getBoundingClientRect();
                 const prevlocationbg = (locationbgref.current as HTMLElement).style;
                 prevlocationbg.left = `${prevlocation.x - padding }px`;
-                prevlocationbg.top = `${prevlocation.y - (padding -3)}px`;
-                prevlocationbg.height = `${prevlocation.height + (padding *2) }px`;
+                prevlocationbg.top = `${prevlocation.y - (padding - 6 )}px`;
+                prevlocationbg.height = `${prevlocation.height + ((padding *2 ) - 6) }px`;
                 prevlocationbg.width = `${prevlocation.width + (padding * 2) }px`;
                 
-                const location = ((locationref.current as HTMLElement).children[index] as HTMLElement).getBoundingClientRect();
+                const location = ((locationref.current as HTMLElement).children[currentPage] as HTMLElement).getBoundingClientRect();
                 const locationbg = (locationbgref.current as HTMLElement).style;
                     locationbg.left = `${location.x - padding}px`;
                     locationbg.top = `${location.y - (padding - 3)}px`;
@@ -60,7 +58,7 @@ const layout : React.FC<LayoutProps> = ({children}) => {
         } catch (error) {
             console.log(error)
         }
-    },[path])
+    },[currentPage, prevPage])
 
   return (
     <section>
@@ -70,12 +68,13 @@ const layout : React.FC<LayoutProps> = ({children}) => {
             ref={locationref}
             >
                 {
-                    locations.map(({name, location})=>(
+                    locations.map(({name, location},i)=>(
                         <p
+                        key={i+"th location key"}
                         onClick={()=>{
-                            if(path !== location){
+                            if(path === location) return;
                                 router.replace(location);
-                            }
+                                dispatch(updatePage(location));
                         }}
                         >{name}</p>
                     ))
