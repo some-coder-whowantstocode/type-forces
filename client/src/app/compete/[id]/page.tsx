@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import WaitingPage from './components/WaitingPage';
 import TypingPage from './components/TypingPage';
@@ -18,6 +18,7 @@ interface mems{
 
 const page: React.FC<{mems:Array<mems>}> = (mems) => {
     const [memslist,setmems] = useState([]);
+
     // first - right side all members rest start / waiting for other players , leave room , chat 
     // second (all ready) - typing page 
     // third (end) - 

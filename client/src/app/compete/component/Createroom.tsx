@@ -160,7 +160,7 @@ const Createroom: React.FC = () => {
                 popup.pushPopup("Custom text can not be smaller than 20");
                 return;
             }
-            CreateGroup(name,roomname, roomlimit, type, numbers, symbols, duration, text);
+            CreateGroup(name,roomname, roomlimit, type);
             reset();
         } catch (error) {
             console.log(error);

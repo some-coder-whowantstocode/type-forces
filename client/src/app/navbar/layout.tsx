@@ -64,8 +64,8 @@ interface LayoutProps {
 const layout : React.FC<LayoutProps> = ({children}) => {
     const {currentPage, prevPage, locations} : pagesliceval = useSelector((state : RootState)=>state.page);
     const router = useRouter();
-    const path = usePathname();
-
+    const path  = usePathname();
+    const regex = /\/(.*?)(\/|$)/;
     const locationref = useRef(null);
     const locationbgref = useRef(null);
     const currentpageref = useRef("");
@@ -123,7 +123,9 @@ const layout : React.FC<LayoutProps> = ({children}) => {
                         <p
                         key={i+"th location key"}
                         onClick={()=>{
-                            if(path === location) return;
+                            if(!path) return;
+                            const match = path.match(regex);
+                            if(!match || match[1] === location) return;
                                 router.replace(location);
                                 dispatch(updatePage(location));
                         }}

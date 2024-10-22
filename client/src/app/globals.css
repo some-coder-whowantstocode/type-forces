@@ -13,3 +13,11 @@ body {
   margin: 0;
 }
 
+/* html {
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar {
+  display: none;
+} */

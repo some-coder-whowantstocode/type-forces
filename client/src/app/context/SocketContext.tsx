@@ -3,6 +3,8 @@ import { createContext, useContext, useEffect, useRef, useState, ReactNode } fro
 import { io, Socket } from "socket.io-client";
 import { LinearCongruentialGenerator } from "../api/compete/route";
 import { usePopup } from '@vik_9827/popup';
+import { Generatekey } from "@/lib/key";
+import { useRouter } from "next/navigation";
 
 interface Room {
     id: number;
@@ -17,13 +19,25 @@ export interface SocketContextType {
     connected: boolean;
     JoinGroup: (id: number, name: string, code: number) => void;
     LeaveGroup: (id: number, name: string) => void;
-    CreateGroup: (name:string,roomname:string, limit: number, type: string, numbers: boolean, symbols: boolean, duration: number, text: string) => void;
+    CreateGroup: (name:string,roomname:string, limit: number, type: string) => void;
     sendResult: (wpm: number) => void;
     getGroups: () => void;
     rooms: Array<Room>;
     create:boolean;
-    setcreate:Function
+    setcreate:Function;
+    privatekey:CryptoKey|null;
+    publickey:CryptoKey|null;
+    roomid:number|null;
+    members:Array<memsinfo>,
+    setmems:Function
 }
+
+interface memsinfo{
+    name:string,
+    publickey:CryptoKey,
+    points:number
+}
+
 
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
 
@@ -31,13 +45,37 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     const [connected, setConnected] = useState(false);
     const [rooms, setRooms] = useState<Room[]>([]);
     const socketRef = useRef<Socket | null>(null);
-  const [create, setcreate] = useState(false);
+    const [create, setcreate] = useState(false);
     const { pushPopup } = usePopup();
+    const [privatekey, setprivatekey] = useState<CryptoKey|null>(null);
+    const [publickey, setpublickey] = useState<CryptoKey|null>(null);
+    const [roomid, setroomid] = useState<number|null>(null);
+    const [members, setmems] = useState<Array<memsinfo>>([]); 
+    const router = useRouter();
 
     useEffect(() => {
         try {
-            const socket: Socket = io('http://localhost:9310');
+            const URL = process.env.NEXT_PUBLIC_SOCKET_URL ;
+            if(!URL){
+                pushPopup("something went wrong with url");
+                return;
+            }
+            const socket: Socket = io(URL);
             socketRef.current = socket;
+
+            (async()=>{
+                try {
+                    const key = await Generatekey();
+                    setprivatekey(key.privateKey);
+                    setpublickey(key.publicKey);
+                } catch (error){
+                    if(error instanceof TypeError){
+                        throw new Error(error.message);
+                    }else{
+                        pushPopup("something went wrong");
+                    }
+                }
+            })()
 
             const handleConnection = () => {
                 setConnected(true);
@@ -58,29 +96,33 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                 socket.off('disconnect', handleDisconnection);
             };
         } catch (error) {
-            console.log(error);
+            pushPopup('something went wrong')
         }
     }, []);
 
     useEffect(() => {
         if (connected) {
             socketRef.current?.on('message', (data) => {
-                console.log(data)
                 switch (data.type) {
                     case 'error':
                         pushPopup(data.error);
                         break;
                     case 'CREATEROOM':
+                        router.replace(`compete/${data.id}`);
+                        setroomid(data.id)
                         pushPopup(data.message);
                         break;
                     case 'JOINROOM':
+                        router.replace(`compete/${data.id}`);
+                        setroomid(data.id)
+                        setmems(data.members)
                         pushPopup(data.message);
                         break;
                     case 'GETROOMS':
                         setRooms(data.rooms);
                         break;
                     default:
-                        console.log(data);
+                        console.log(data.type === "JOINROOM");
                 }
             });
 
@@ -92,14 +134,15 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
     const JoinGroup = (id: number, name: string, code: number) => {
         if (socketRef.current) {
-            socketRef.current.emit('JOINROOM', { id, name, code });
+            socketRef.current.emit('JOINROOM', { id, name, code, publickey });
         }
     };
 
-    const CreateGroup = (name:string, roomname:string, limit: number, type: string, numbers: boolean, symbols: boolean, duration: number, text: string) => {
+    const CreateGroup = (name:string, roomname:string, limit: number, type: string) => {
         if (socketRef.current) {
+            console.log(name)
             const code = LinearCongruentialGenerator(Date.now());
-            const data = { name, roomname, limit, type, duration, text, numbers, symbols, code };
+            const data = { name, roomname, limit, type, code, publickey };
             socketRef.current.emit('CREATEROOM', data);
         }
     };
@@ -123,7 +166,7 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     };
 
     return (
-        <SocketContext.Provider value={{ socket: socketRef.current, connected, JoinGroup, LeaveGroup, CreateGroup, sendResult, getGroups, rooms, create , setcreate }}>
+        <SocketContext.Provider value={{members, setmems, socket: socketRef.current, connected, JoinGroup, LeaveGroup, CreateGroup, sendResult, getGroups, rooms, create , setcreate, privatekey, publickey, roomid }}>
             {children}
         </SocketContext.Provider>
     );
