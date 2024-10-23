@@ -14,7 +14,7 @@
     "@types/socket.io": "^3.0.2",
     "@types/socket.io-client": "^3.0.0",
     "@vik_9827/popup": "^1.0.0",
-    "@vik_9827/type-writer": "^1.0.8",
+    "@vik_9827/type-writer": "^1.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.1",
     "next": "14.2.15",
@@ -32,6 +32,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "babel-plugin-styled-components": "^2.1.4",
     "typescript": "^5"
   }
 }

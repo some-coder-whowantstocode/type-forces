@@ -131,7 +131,7 @@ const Createroom: React.FC = () => {
     const [numbers, setnumbers] = useState(false);
     const [duration, setduration] = useState(20);
     const [text, settext] = useState("");
-    const [givetext, settxt] = useState(false);
+    const [givetext, settxt] = useState(true);
     const [name, setname] = useState("");
 
     const reset = () => {
@@ -142,7 +142,7 @@ const Createroom: React.FC = () => {
         setnumbers(false);
         setduration(20);
         settext("");
-        settxt(false);
+        settxt(true);
         setcreate(false);
     }
 
@@ -156,11 +156,15 @@ const Createroom: React.FC = () => {
                 popup.pushPopup("Room name must be between 4 - 20 letters");
                 return;
             }
-            if (givetext && text.length < 20) {
+            let ntext = text.trim();
+            ntext = ntext.replace(/([./])/g, '$1 ');
+            ntext = ntext.replace(/\s+/g, ' ');
+            console.log(ntext)
+            if (ntext.length < 100) {
                 popup.pushPopup("Custom text can not be smaller than 20");
                 return;
             }
-            CreateGroup(name,roomname, roomlimit, type);
+            CreateGroup(name,roomname, roomlimit, type, ntext, duration);
             reset();
         } catch (error) {
             console.log(error);
@@ -200,13 +204,13 @@ const Createroom: React.FC = () => {
             <div>
                 <p>Select the type of room</p>
                 <Privateroom>
-                    <p
+                    {/* <p
                         onClick={() => settype('private')}
                         style={{
                             color: `${type === 'private' ? '#00a6bf' : 'white'}`,
                             border: `${type === 'private' ? ` 2px solid #00a6bf` : 'none'}`
                         }}
-                    >Private</p>
+                    >Private</p> */}
                     <p
                         onClick={() => settype('public')}
                         style={{
@@ -218,7 +222,7 @@ const Createroom: React.FC = () => {
             </div>
             <div></div>
             <div>
-                <div>
+                {/* <div>
                     <p>provide text</p>
                     <Privateroom>
                         <p
@@ -236,13 +240,13 @@ const Createroom: React.FC = () => {
                             }}
                         >Normal</p>
                     </Privateroom>
-                </div>
+                </div> */}
                 <Providetext>
                     {
                         givetext ?
 
                             <div>
-                                <textarea name="" id="" value={text} onChange={(e) => {
+                                <textarea name="" id="" value={text} placeholder='put custom text here' onChange={(e) => {
                                     settext(e.target.value);
                                 }} ></textarea>
                             </div>

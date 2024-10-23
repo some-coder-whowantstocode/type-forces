@@ -1,8 +1,8 @@
 async function Generatekey() {
     try {
-        const algo = process.env.NEXT_PUBLIC_CRYPTO_ALGORITHM ;
+        const algo = process.env.NEXT_PUBLIC_CRYPTO_ALGORITHM;
         const hash = process.env.NEXT_PUBLIC_CRYPTO_HASH;
-        if(!algo || !hash){
+        if (!algo || !hash) {
             throw Error("error while encryption");
         }
         let keyPair = await window.crypto.subtle.generateKey(
@@ -21,18 +21,18 @@ async function Generatekey() {
     }
 }
 
-async function encrypt(message:string, publickey:CryptoKey) {
+async function encrypt(message: string, publickey: CryptoKey) {
     try {
-        const algo = process.env.NEXT_PUBLIC_CRYPTO_ALGORITHM ;
-        if(!algo){
+        const algo = process.env.NEXT_PUBLIC_CRYPTO_ALGORITHM;
+        if (!algo) {
             throw Error("error while encryption");
         }
         const data = new TextEncoder().encode(message);
         const encrypteddata = await window.crypto.subtle.encrypt({
-            name:algo
+            name: algo
         },
-        publickey,
-        data
+            publickey,
+            data
         )
         return encrypteddata;
     } catch (error) {
@@ -41,17 +41,17 @@ async function encrypt(message:string, publickey:CryptoKey) {
     }
 }
 
-async function decrypt(message:BufferSource, privatekey:CryptoKey) {
+async function decrypt(message: BufferSource, privatekey: CryptoKey) {
     try {
-        const algo = process.env.NEXT_PUBLIC_CRYPTO_ALGORITHM ;
-        if(!algo){
+        const algo = process.env.NEXT_PUBLIC_CRYPTO_ALGORITHM;
+        if (!algo) {
             throw Error("error while encryption");
         }
         const decrypteddata = await window.crypto.subtle.decrypt({
-            name:algo
+            name: algo
         },
-        privatekey,
-        message
+            privatekey,
+            message
         )
         const decodedata = await new TextDecoder().decode(decrypteddata)
         return decodedata;
@@ -60,8 +60,32 @@ async function decrypt(message:BufferSource, privatekey:CryptoKey) {
     }
 }
 
+async function exportPublicKey(publicKey: CryptoKey) {
+    const exported = await window.crypto.subtle.exportKey(
+        "jwk",
+        publicKey
+    );
+    return exported;
+}
+
+async function importPublicKey(exportedKey: JsonWebKey) {
+    const publicKey = await window.crypto.subtle.importKey(
+        "jwk", 
+        exportedKey,
+        {
+            name: "RSA-OAEP",
+            hash: { name: "SHA-256" },
+        },
+        true,
+        ["encrypt"]
+    );
+    return publicKey;
+}
+
 export {
     Generatekey,
     encrypt,
-    decrypt
+    decrypt,
+    exportPublicKey,
+    importPublicKey
 }
