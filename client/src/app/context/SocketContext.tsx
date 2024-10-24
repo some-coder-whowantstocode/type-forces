@@ -37,6 +37,7 @@ export interface SocketContextType {
     roomname: string;
     setroomid: Function;
     connecting: boolean;
+    wakeup: Function;
 }
 
 export interface memsinfo {
@@ -63,9 +64,38 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     const [myname, setmyname] = useState("");
     const [roomname, setroomname] = useState("");
 
+    const wakeup = async () => {
+        try {
+            const URL = process.env.NEXT_PUBLIC_SOCKET_URL;
+            if(!URL) return;
+            const response = await fetch(URL, {
+                method: 'HEAD',
+                headers: {
+                    'Origin': window.location.origin
+                }
+            });
+
+            if (response.ok) {
+                console.log('Server is awake');
+            } else {
+                console.log('Server is not awake, waking it up...');
+                await fetch(URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Origin': window.location.origin
+                    },
+                    body: JSON.stringify({ action: 'wake-up' }),
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
     useEffect(() => {
         const initSocket = async () => {
             try {
+                wakeup();
                 const URL = process.env.NEXT_PUBLIC_SOCKET_URL;
                 if (!URL) {
                     pushPopup("something went wrong with URL");
@@ -82,13 +112,21 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                     setpublickey(pkey);
                 } catch (error) {
                     if (error instanceof TypeError) {
+                        console.error('Key generation error:', error);
                         throw new Error(error.message);
                     } else {
+                        console.error('Unknown key generation error:', error);
                         pushPopup("something went wrong during key generation");
                     }
                 }
-
+                console.log(socket.connected)
+                if (socket.connected) {
+                    console.log("Connected to socket extra");
+                    setconnecting(false);
+                    setConnected(true);
+                }
                 socket.on('connect', () => {
+                    console.log("Connected to socket server");
                     setconnecting(false);
                     setConnected(true);
                     socket.io.engine.on('upgrade', (transport) => {
@@ -97,27 +135,31 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                 });
 
                 socket.on('reconnect_attempt', () => {
+                    console.log('hi')
                     setconnecting(true);
-                    console.log('attempting to reconnect');
+                    console.log('Attempting to reconnect');
                 });
 
                 socket.on('reconnect_failed', () => {
                     setconnecting(false);
-                    console.log('failed to reconnect');
+                    console.log('Failed to reconnect');
                 });
 
                 socket.on('disconnect', () => {
                     setconnecting(false);
                     setConnected(false);
                     LeaveGroup();
-                    router.replace("/compete")
+                    router.replace("/compete");
                 });
 
                 return () => {
                     socket.off('connect');
                     socket.off('disconnect');
+                    socket.off('reconnect_attempt');
+                    socket.off('reconnect_failed');
                 };
             } catch (error) {
+                console.error('Socket connection error:', error);
                 pushPopup('something went wrong with socket connection');
             }
         };
@@ -214,10 +256,10 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     };
 
 
-    
+
     return (
         <SocketContext.Provider value={{
-            setroomid, roomname, myname, setmyname, members, setmems, socket: socketRef.current, connecting, 
+            setroomid, roomname, myname, setmyname, members, setmems, socket: socketRef.current, connecting, wakeup,
             connected, JoinGroup, LeaveGroup, CreateGroup, sendResult, getGroups, rooms, create, setcreate, privatekey, publickey, roomid
         }}>
             {children}

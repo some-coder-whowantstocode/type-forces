@@ -2,9 +2,13 @@ const express = require('express');
 const { createServer } = require('node:http');
 const { Server } = require('socket.io');
 require('dotenv').config();
+const cors = require('cors');
 
-const port = process.env.PORT; 
 const app = express();
+const port = process.env.PORT; 
+app.use(cors({
+    origin: process.env.ORIGIN
+}));
 const server = createServer(app);
 module.exports.io = new Server(server,{
     cors:{
@@ -17,6 +21,9 @@ module.exports.io = new Server(server,{
 
 require('./socket')
 
+app.get('/wakeup',(req,res)=>{
+    res.send()
+})
 
 app.get('/', (req, res) => {
     res.send('working');

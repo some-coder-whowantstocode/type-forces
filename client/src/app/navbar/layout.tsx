@@ -99,7 +99,7 @@ const layout : React.FC<LayoutProps> = ({children}) => {
     const locationref = useRef(null);
     const locationbgref = useRef(null);
     const currentpageref = useRef("");
-    const {connected, connecting} = useSocket();
+    const {connected, connecting, wakeup} = useSocket();
 
     const dispatch = useDispatch();
 
@@ -174,9 +174,9 @@ const layout : React.FC<LayoutProps> = ({children}) => {
                 <Connected   title='connected'/>
                 :
                 connecting ?
-                <Loading title='connecting'/>
+                <Loading  title='connecting'/>
                 :
-                <Reconnect  title='reconnect'/>
+                <Reconnect onClick={()=>wakeup()}  title='reconnect'/>
             }
         </Navbar>
         {children}

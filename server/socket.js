@@ -1,12 +1,13 @@
 const { io } = require(".");
 const { createRoom, getrooms, joinroom, sendmessage, startMatch, leaveroom, matchend } = require("./Room methods");
-const { UserList } = require("./user data");
+
 
 
 if(!io){
     return
 }
 io.on('connection', async(socket) => {
+    console.log('user connected')
     try {
         socket.on('roommessage',(message)=>{
             sendmessage(message, socket);
@@ -32,9 +33,6 @@ io.on('connection', async(socket) => {
         getrooms(socket)
         })
         socket.on('disconnect',()=>{
-            if(UserList.has(socket.id)){
-                leaveroom({id:socket.id},socket);
-            }
             console.log('user disconnected');
         })
     } catch (error) {
