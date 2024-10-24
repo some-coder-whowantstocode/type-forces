@@ -6,6 +6,7 @@ import { LinearCongruentialGenerator } from "../../lib/lineargradientgenerator";
 import { usePopup } from '@vik_9827/popup/dist/bundle.js';
 import { exportPublicKey, Generatekey } from "@/lib/key";
 import { useRouter } from "next/navigation";
+import { useRouter as rrouter } from "next/router";
 
 
 interface Room {
@@ -36,7 +37,8 @@ export interface SocketContextType {
     setmyname: Function;
     roomname: string;
     setroomid: Function;
-    connecting:boolean;
+    connecting: boolean;
+    isPC:boolean
 }
 
 export interface memsinfo {
@@ -63,7 +65,7 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     const [myname, setmyname] = useState("");
     const [roomname, setroomname] = useState("");
 
-
+    const path = rrouter().asPath
 
     useEffect(() => {
         const initSocket = async () => {
@@ -75,8 +77,8 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                 }
                 setconnecting(true);
                 const socket: Socket = io(URL);
-                    socketRef.current = socket;
-                if(!socket) return;
+                socketRef.current = socket;
+                if (!socket) return;
                 try {
                     const key = await Generatekey();
                     const pkey = await exportPublicKey(key.publicKey);
@@ -102,12 +104,12 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                     setconnecting(true);
                     console.log('attempting to reconnect');
                 });
-                
+
                 socket.on('reconnect_failed', () => {
                     setconnecting(false);
                     console.log('failed to reconnect');
                 });
-                
+
                 socket.on('disconnect', () => {
                     setconnecting(false);
                     setConnected(false);
@@ -179,14 +181,14 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }, [connected, pushPopup, router]);
 
     const JoinGroup = (id: number, name: string, code: number) => {
-        if(!connected) return;
+        if (!connected) return;
         if (socketRef.current) {
             socketRef.current.emit('JOINROOM', { id, name, code, publickey });
         }
     };
 
     const CreateGroup = (name: string, roomname: string, limit: number, type: string, text: string, duration: number) => {
-        if(!connected) return;
+        if (!connected) return;
         if (socketRef.current) {
             const code = LinearCongruentialGenerator(Date.now());
             const data = { name, roomname, limit, type, code, publickey, text, duration };
@@ -195,29 +197,48 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     };
 
     const LeaveGroup = () => {
-        if(!connected) return;
+        if (!connected) return;
         if (socketRef.current && roomid && myname) {
             socketRef.current.emit('LEAVEROOM', { id: roomid, name: myname });
         }
     };
 
     const sendResult = (wpm: number) => {
-        if(!connected) return;
+        if (!connected) return;
         if (socketRef.current) {
             socketRef.current.emit('WPM', { wpm });
         }
     };
 
     const getGroups = () => {
-        if(!connected) return;
+        if (!connected) return;
         if (socketRef.current) {
             socketRef.current.emit('GETROOMS');
         }
     };
 
+
+    const [isPC, setIsPC] = useState(true);
+
+    useEffect(() => {
+        const checkIfPC = () => {
+            const userAgent = navigator.userAgent;
+            const mobileDevices = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+            return !mobileDevices.test(userAgent)
+        };
+
+        if (!checkIfPC()) {
+            setIsPC(false);
+            router.replace('/');
+        } else {
+            if (!router) return;
+            router.replace("/compete");
+        }
+    }, [path]);
+
     return (
         <SocketContext.Provider value={{
-            setroomid, roomname, myname, setmyname, members, setmems, socket: socketRef.current,connecting,
+            setroomid, roomname, myname, setmyname, members, setmems, socket: socketRef.current, connecting, isPC,
             connected, JoinGroup, LeaveGroup, CreateGroup, sendResult, getGroups, rooms, create, setcreate, privatekey, publickey, roomid
         }}>
             {children}
