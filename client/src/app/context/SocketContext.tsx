@@ -128,7 +128,7 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                         pushPopup(data.error);
                         break;
                     case 'CREATEROOM':
-                        router.replace(`/match/${data.id}`);
+                        router.replace(`/match/id`);
                         setmems(data.memslist);
                         setroomid(data.id);
                         pushPopup(data.message);
@@ -136,7 +136,7 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                         setroomname(data.roomname);
                         break;
                     case 'JOINROOM':
-                        router.replace(`/match/${data.id}`);
+                        router.replace(`/match/id`);
                         setroomid(data.id);
                         setmems(data.members);
                         pushPopup(data.message);
