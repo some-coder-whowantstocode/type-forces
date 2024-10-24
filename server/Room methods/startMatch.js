@@ -1,8 +1,8 @@
 const { io } = require("..");
-const { findRoom } = require("../helpers");
+const { findRoom, generateText } = require("../helpers");
 const { ROOM_DETAILS, ROOMS_ID } = require("../user data");
 
-module.exports.startMatch =(data, socket)=>{
+module.exports.startMatch =async(data, socket)=>{
     try {
         if(!data.id ){
             const err = { type: 'error', error: 'Something went wrong' };
@@ -21,7 +21,12 @@ module.exports.startMatch =(data, socket)=>{
                 if(!mem.ready){
                     rdata.ready +=1;
                     if(rdata.ready === rdata.mems){
-                        io.to(data.id).emit(`${data.id}message`,{type:"start",text:rdata.text, duration:rdata.duration});
+                        let text = rdata.text;
+                        if(!rdata.text){
+                            text = await generateText(rdata.numbers, rdata.symbols, 100);
+                            console.log(rdata.numbers);
+                        }
+                        io.to(data.id).emit(`${data.id}message`,{type:"start",text:text, duration:rdata.duration});
                     }
                 }else{
                     rdata.ready -=1;

@@ -3,7 +3,7 @@ const {ROOMS_ID, ROOM_DETAILS} = require("../user data/index")
 
 module.exports.createRoom =(data, socket)=>{
     try {
-        if (!data.roomname || !data.limit || !data.type || (data.type === "private" && !data.code) || !data.text || !data.duration || !data.publickey || !data.name ) {
+        if (!data.roomname || !data.limit || !data.type || (data.type === "private" && !data.code) || !data.duration || !data.publickey || !data.name ) {
             const err = { type: 'error', error: 'Not all necessary information is present' };
             socket.send(err);
             return;
@@ -17,12 +17,14 @@ module.exports.createRoom =(data, socket)=>{
             type:data.type,
             code:data.code,
             duration:data.duration,
-            text:data.text,
+            text:data.text || null,
+            numbers:data.numbers || false,
+            symbols:data.numbers || false,
             mems: 1, 
             ready:0,
             memslist:[{name:data.name, id:socket.id, publickey:data.publickey, points:0, ready:false}] });
         socket.join(id);
-        socket.send({ type:"CREATEROOM",roomtype: data.type, message: "Room created successfully.",duration:data.duration, roomname:data.roomname, text:data.text, id, memslist:[{name:data.name, id:socket.id, publickey:data.publickey, points:0}] });
+        socket.send({ type:"CREATEROOM",roomtype: data.type, message: "Room created successfully.", roomname:data.roomname, id, memslist:[{name:data.name, id:socket.id, publickey:data.publickey, points:0}] });
         
     } catch (error) {
         console.error(error);
