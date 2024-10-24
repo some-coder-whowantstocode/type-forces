@@ -2,7 +2,6 @@ import { createContext, ReactNode, useContext, useEffect, useState, FC } from "r
 import { memsinfo, useSocket } from "./SocketContext";
 import { usePopup } from '@vik_9827/popup/dist/bundle.js';
 import { decrypt, encrypt, importPublicKey } from "@/lib/key";
-import { useRouter } from "next/router";
 
 
 

@@ -6,7 +6,6 @@ import { LinearCongruentialGenerator } from "../../lib/lineargradientgenerator";
 import { usePopup } from '@vik_9827/popup/dist/bundle.js';
 import { exportPublicKey, Generatekey } from "@/lib/key";
 import { useRouter } from "next/navigation";
-import { useRouter as rrouter } from "next/router";
 
 
 interface Room {
@@ -38,7 +37,6 @@ export interface SocketContextType {
     roomname: string;
     setroomid: Function;
     connecting: boolean;
-    isPC:boolean
 }
 
 export interface memsinfo {
@@ -64,8 +62,6 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     const router = useRouter();
     const [myname, setmyname] = useState("");
     const [roomname, setroomname] = useState("");
-
-    const path = rrouter().asPath
 
     useEffect(() => {
         const initSocket = async () => {
@@ -218,27 +214,10 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     };
 
 
-    const [isPC, setIsPC] = useState(true);
-
-    useEffect(() => {
-        const checkIfPC = () => {
-            const userAgent = navigator.userAgent;
-            const mobileDevices = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
-            return !mobileDevices.test(userAgent)
-        };
-
-        if (!checkIfPC()) {
-            setIsPC(false);
-            router.replace('/');
-        } else {
-            if (!router) return;
-            router.replace("/compete");
-        }
-    }, [path]);
-
+    
     return (
         <SocketContext.Provider value={{
-            setroomid, roomname, myname, setmyname, members, setmems, socket: socketRef.current, connecting, isPC,
+            setroomid, roomname, myname, setmyname, members, setmems, socket: socketRef.current, connecting, 
             connected, JoinGroup, LeaveGroup, CreateGroup, sendResult, getGroups, rooms, create, setcreate, privatekey, publickey, roomid
         }}>
             {children}

@@ -62,50 +62,64 @@ const CompetePage = styled.div`
     }
 `
 
-interface mems{
-    name:string,
-    id:string
+interface mems {
+    name: string,
+    id: string
 }
 
 const page: React.FC<{}> = () => {
-    const {roomname, LeaveGroup, setroomid, connected} = useSocket();
-    const {reset, competestate, competestates} = useCompete();
+    const { roomname, LeaveGroup, setroomid, connected } = useSocket();
+    const { reset, competestate, competestates } = useCompete();
+
+
     const router = useRouter();
 
-    useEffect(()=>{
+    useEffect(() => {
+        const checkIfPC = () => {
+            const userAgent = navigator.userAgent
+            const mobileDevices = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+            return !mobileDevices.test(userAgent)
+        };
+
+        if (!checkIfPC()) {
+            router.replace('/');
+        }
+    }, []);
+
+    useEffect(() => {
         console.log(competestate)
-    },[competestate])
+    }, [competestate])
 
     return (
         <CompetePage>
-            {  <header>
+            {<header>
                 {
                     connected ?
-                    <button
-                    onClick={()=>{
-                        
-                        LeaveGroup();
-                        reset();
-                        setroomid(null);
-                        router.replace('/compete')
-                    }}
-                    >Leave</button>
-                    :
-                    <button
-                    disabled 
-                    style={{
-                        cursor:"no-drop"
-                    }}
-                    >Leave</button>
+                        <button
+                            onClick={() => {
+
+                                LeaveGroup();
+                                reset();
+                                setroomid(null);
+                                router.replace('/compete')
+                            }}
+                        >Leave</button>
+                        :
+                        <button
+                            disabled
+                            style={{
+                                cursor: "no-drop"
+                            }}
+                        >Leave</button>
                 }
-               
-                <p>{(roomname && roomname.length > 0) ? roomname : "roomname" }</p>
+
+                <p>{(roomname && roomname.length > 0) ? roomname : "roomname"}</p>
             </header>}
             {
                 competestate === competestates[0] ?
-                <WaitingPage/>
-                :
-                <TypingPage/>
+                    <WaitingPage />
+                    :
+                    <TypingPage />
             }
 
         </CompetePage>

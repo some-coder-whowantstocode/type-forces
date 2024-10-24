@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Createroom from './component/Createroom';
 import { usePopup } from '@vik_9827/popup/dist/bundle.js';
 import { useEffect, useState } from 'react';
+import { useRouter as navrouter } from 'next/navigation';
 
 const CompetePage = styled.div`
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -136,6 +137,20 @@ const Page: React.FC = () => {
   const [roominfo, setri] = useState<roomdata|null>(null);
   const [name,setname] = useState("");
   const [code, setcode] = useState("");
+
+  const navigation = navrouter();
+
+  useEffect(() => {
+    const checkIfPC = () => {
+      const userAgent = navigator.userAgent;
+      const mobileDevices = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+      return !mobileDevices.test(userAgent)
+    };
+
+    if (!checkIfPC()) {
+      navigation.replace('/');
+    }
+  }, []);
 
   const verify =()=>{
     if(roominfo){
