@@ -89,6 +89,10 @@ export const CompeteProvider : FC<{children:ReactNode}> =({children})=>{
                 }
             })
 
+            socket?.on('disconnect', () => {
+                reset();
+            });
+
             return ()=>{
                 socket?.off(`${roomid}message`)
             }
@@ -96,17 +100,24 @@ export const CompeteProvider : FC<{children:ReactNode}> =({children})=>{
     },[connected,roomid])
 
     const sendMessage =(msg:string)=>{
-        if(connected){
-            members.map(async({ publickey,id})=>{
-                const pkey:CryptoKey  = await importPublicKey(publickey);
-                const text = await encrypt(msg,pkey)
-                socket?.emit(`roommessage`,{id:roomid,sid:id,text,name:myname});
-            
-        })
-    }}
+        try {
+            if(connected){
+                members.map(async({ publickey,id})=>{
+                    const pkey:CryptoKey  = await importPublicKey(publickey);
+                    const text = await encrypt(msg,pkey)
+                    socket?.emit(`roommessage`,{id:roomid,sid:id,text,name:myname});
+                
+            })
+        }
+        } catch (error) {
+            console.log(error);
+            pushPopup("something went wrong");
+        }
+        }
 
     const sendResult =(wpm:number, raw_wpm:number, accuracy:number)=>{
         try {
+            if(!connected) return;
             socket?.emit(`matchend`,{id:roomid,wpm,raw:raw_wpm,accuracy});
         } catch (error) {
             console.log(error);
@@ -115,10 +126,15 @@ export const CompeteProvider : FC<{children:ReactNode}> =({children})=>{
     }
 
     const startMatch =()=>{
-        if(connected){
+        try {
+            if(connected){
                 socket?.emit(`startmatch`,{id:roomid});
             }
             setloading(true);
+        } catch (error) {
+            console.log(error);
+            pushPopup("something went wrong");
+        }
     }
 
     const reset =()=>{

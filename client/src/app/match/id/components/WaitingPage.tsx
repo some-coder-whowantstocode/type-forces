@@ -202,7 +202,7 @@ const Message = styled.div`
 
 
 const WaitingPage = () => {
-    const {members} = useSocket();
+    const {members, connected} = useSocket();
     const {chat, sendMessage, loading, startMatch} = useCompete()
     const [msg, setmessage] = useState("");
     return (
@@ -228,11 +228,19 @@ const WaitingPage = () => {
                     clickable={loading}
                     >
                         {
+
                             loading ?
                             <button><Loading/></button>
                             :
+                            connected ?
                             <button
                             onClick={()=>startMatch()}
+                            >start</button>
+                            :
+                            <button
+                            onClick={()=>startMatch()}
+                            disabled
+                            style={{cursor:"no-drop"}}
                             >start</button>
                         }
                     </Start>            
@@ -253,10 +261,24 @@ const WaitingPage = () => {
                     <input type="text" value={msg} onChange={(e)=>{
                         setmessage(e.target.value)}
                         } placeholder='write message here...' />
-                    <button onClick={()=> {
-                        (msg.trim()).length > 0 &&  sendMessage(msg)
-                        setmessage("")
-                    }}>send</button>
+                        {
+                            connected ?
+                            <button onClick={()=> {
+                            (msg.trim()).length > 0 &&  sendMessage(msg)
+                            setmessage("")
+                            }}>send</button>
+                            :
+                            <button onClick={()=> {
+                            (msg.trim()).length > 0 &&  sendMessage(msg)
+                            setmessage("")
+                            }}
+                            disabled
+                            style={{
+                                cursor:'no-drop'
+                            }}
+                            >send</button>
+                        }
+                    
                 </Chat>
         </Page>
     )

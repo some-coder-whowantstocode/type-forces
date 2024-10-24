@@ -68,7 +68,7 @@ interface mems{
 }
 
 const page: React.FC<{}> = () => {
-    const {roomname, LeaveGroup, setroomid} = useSocket();
+    const {roomname, LeaveGroup, setroomid, connected} = useSocket();
     const {reset, competestate, competestates} = useCompete();
     const router = useRouter();
 
@@ -79,15 +79,26 @@ const page: React.FC<{}> = () => {
     return (
         <CompetePage>
             {  <header>
-                <button
-                onClick={()=>{
-                    
-                    LeaveGroup();
-                    reset();
-                    setroomid(null);
-                    router.replace('/compete')
-                }}
-                >Leave</button>
+                {
+                    connected ?
+                    <button
+                    onClick={()=>{
+                        
+                        LeaveGroup();
+                        reset();
+                        setroomid(null);
+                        router.replace('/compete')
+                    }}
+                    >Leave</button>
+                    :
+                    <button
+                    disabled 
+                    style={{
+                        cursor:"no-drop"
+                    }}
+                    >Leave</button>
+                }
+               
                 <p>{(roomname && roomname.length > 0) ? roomname : "roomname" }</p>
             </header>}
             {
@@ -96,7 +107,6 @@ const page: React.FC<{}> = () => {
                 :
                 <TypingPage/>
             }
-                {/* <TypingPage/> */}
 
         </CompetePage>
     )

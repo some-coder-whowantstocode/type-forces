@@ -33,6 +33,7 @@ const TypingPage = () => {
         customStyle={{}}
         setdata={data}
         repetation={duration || 20}
+        auto={true}
       />
     </Tpage>
   )

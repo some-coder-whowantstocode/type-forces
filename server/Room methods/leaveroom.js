@@ -4,7 +4,8 @@ const { ROOMS_ID, ROOM_DETAILS } = require("../user data");
 
 module.exports.leaveroom =(data, socket)=>{
     try {
-        if(!data.id || !data.name) return;
+        if(!data.id) return;
+        let name;
         const {room,pos} = findRoom(data);
         if(!room){
             return;
@@ -21,8 +22,8 @@ module.exports.leaveroom =(data, socket)=>{
                     if(memslist.ready){
                         rdata.ready -=1;
                     }
+                    name = memslist[i].name;
                     rdata.mems -=1;
-                    console.log(rdata)
                     if(rdata.ready === rdata.mems){
                         io.to(data.id).emit(`${data.id}message`,{type:"start",text:rdata.text, duration:rdata.duration});
                     }
@@ -34,7 +35,7 @@ module.exports.leaveroom =(data, socket)=>{
             ROOM_DETAILS.set(room.id, rdata);
             ROOMS_ID[pos] = room;
             socket.leave(room.id);
-            io.to(room.id).emit(`${room.id}message`,{type:"left",member:data.name,message:`${data.name} left the room`})
+            io.to(room.id).emit(`${room.id}message`,{type:"left",member:name,message:`${name} left the room`})
         }
     } catch (error) {
         console.log(error)

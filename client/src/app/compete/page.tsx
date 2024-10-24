@@ -129,7 +129,7 @@ interface roomdata{
 }
 
 const Page: React.FC = () => {
-  const { rooms, getGroups, create, setcreate, JoinGroup } = useSocket() as SocketContextType;
+  const { rooms, getGroups, create, setcreate, JoinGroup, connected } = useSocket() as SocketContextType;
   const popup = usePopup();
 
   const [join, setjoin] = useState(false);
@@ -210,7 +210,12 @@ const Page: React.FC = () => {
           <p>Room name</p>
         </div>
         <div>
-      <button onClick={getGroups}>update</button>
+          {
+            connected ?
+            <button onClick={getGroups} >update</button>
+            :
+      <button onClick={getGroups} disabled style={{cursor:"no-drop"}} >update</button>
+          }
         </div>
       </Room>
       {rooms.map(({ roomname, id, type, limit,mems },i) => (

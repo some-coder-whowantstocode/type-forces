@@ -123,7 +123,7 @@ const Options = styled.div`
 
 const Createroom: React.FC = () => {
     const popup = usePopup();
-    const { CreateGroup, setcreate } = useSocket();
+    const { CreateGroup, setcreate, connected } = useSocket();
     const [roomname, setroomname] = useState("");
     const [roomlimit, setlimit] = useState(2);
     const [type, settype] = useState('public');
@@ -173,13 +173,19 @@ const Createroom: React.FC = () => {
     return (
         <ROOM>
             <Cancelcreate>
-                <button onClick={() => verify()}>create</button>
+                {
+                    connected ?
+                    <button onClick={() => verify()}>create</button>
+                    :
+                <button onClick={() => verify()} disabled style={{cursor:"no-drop"}}>create</button>
+                }
                 <button
                     style={{
                         backgroundColor: '#8a0000'
                     }}
                     onClick={() => reset()}
-                >cancel</button>
+                >cancel
+                </button>
             </Cancelcreate>
             <NameSpace>
                 <p>Name</p>

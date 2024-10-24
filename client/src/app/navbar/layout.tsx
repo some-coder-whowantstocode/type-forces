@@ -1,11 +1,13 @@
 import React, {ReactNode, useEffect, useState, useRef} from 'react'
 import { useRouter, usePathname } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
-import styled from "styled-components";
-import { IoSettings } from "react-icons/io5";
-
+import styled, { keyframes } from "styled-components";
+import { IoReload } from "react-icons/io5";
+import { TbBrandSocketIo } from "react-icons/tb";
 import { pagesliceval, updatePage } from '../../lib/features/pageSlice';
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { RootState } from '../../lib/store.js';
+import { useSocket } from '../context/SocketContext';
 
 const Navbar =styled.div`
 display: flex;
@@ -51,8 +53,36 @@ const LocationBackground = styled.div`
   transition: left 0.5s ease, top 0.5s ease, height 0.5s ease, width 0.5s ease;
 `
 
-const Settings = styled(IoSettings)`
+const Reconnect = styled(IoReload)`
     cursor: pointer;
+    color: red;
+    font-weight: 900;
+    font-size: 1.4rem;
+`
+
+const rotate = keyframes`
+    from {
+    transform: rotate(0deg);
+    }
+
+    to {
+    transform: rotate(360deg);
+    }
+`;
+
+const Loading = styled(AiOutlineLoading3Quarters)`
+    cursor: pointer;
+    color: white;
+    font-weight: 900;
+    font-size: 1.4rem;
+    animation: ${rotate} 2s linear infinite;
+`
+
+const Connected = styled(TbBrandSocketIo)`
+    cursor: pointer;
+    color: green;
+    font-weight: 900;
+    font-size: 1.4rem;
 `
 
 
@@ -69,12 +99,17 @@ const layout : React.FC<LayoutProps> = ({children}) => {
     const locationref = useRef(null);
     const locationbgref = useRef(null);
     const currentpageref = useRef("");
+    const {connected, connecting} = useSocket();
 
     const dispatch = useDispatch();
 
     useEffect(()=>{
         dispatch(updatePage(path));
     },[])
+
+    useEffect(()=>{
+        console.log(connected)
+    },[connected])
 
 
     useEffect(()=>{
@@ -134,7 +169,15 @@ const layout : React.FC<LayoutProps> = ({children}) => {
                 }
             </Locations>
             <LocationBackground ref={locationbgref} ></LocationBackground>
-            <Settings/>
+            {
+                connected ?
+                <Connected   title='connected'/>
+                :
+                connecting ?
+                <Loading title='connecting'/>
+                :
+                <Reconnect  title='reconnect'/>
+            }
         </Navbar>
         {children}
     </section>
