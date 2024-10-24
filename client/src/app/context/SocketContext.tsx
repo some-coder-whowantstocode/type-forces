@@ -21,7 +21,7 @@ export interface SocketContextType {
     connected: boolean;
     JoinGroup: (id: number, name: string, code: number) => void;
     LeaveGroup: () => void;
-    CreateGroup: (name: string, roomname: string, limit: number, type: string, text: string, duration: number) => void;
+    CreateGroup: (name: string, roomname: string, limit: number, type: string, text: string|null, duration: number,numbers:boolean, symbols:boolean) => void;
     sendResult: (wpm: number) => void;
     getGroups: () => void;
     rooms: Array<Room>;
@@ -78,7 +78,6 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
             if (response.ok) {
                 console.log('Server is awake');
             } else {
-                console.log('Server is not awake, waking it up...');
                 await fetch(URL, {
                     method: 'POST',
                     headers: {
@@ -225,11 +224,11 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         }
     };
 
-    const CreateGroup = (name: string, roomname: string, limit: number, type: string, text: string, duration: number) => {
+    const CreateGroup = (name: string, roomname: string, limit: number, type: string, text: string|null, duration: number,numbers:boolean, symbols:boolean) => {
         if (!connected) return;
         if (socketRef.current) {
             const code = LinearCongruentialGenerator(Date.now());
-            const data = { name, roomname, limit, type, code, publickey, text, duration };
+            const data = { name, roomname, limit, type, code, publickey, text, duration, numbers, symbols };
             socketRef.current.emit('CREATEROOM', data);
         }
     };

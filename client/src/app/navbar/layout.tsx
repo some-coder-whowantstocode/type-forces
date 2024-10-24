@@ -82,7 +82,10 @@ const Connected = styled(TbBrandSocketIo)`
     cursor: pointer;
     color: green;
     font-weight: 900;
-    font-size: 1.4rem;
+    font-size: 1.6rem;
+    &:hover{
+        color: white;
+    }
 `
 
 
@@ -171,7 +174,13 @@ const layout : React.FC<LayoutProps> = ({children}) => {
             <LocationBackground ref={locationbgref} ></LocationBackground>
             {
                 connected ?
-                <Connected   title='connected'/>
+                <a
+                    title='more about me'
+                    href='https://protfolio-zu32.onrender.com/'
+                    target="_blank"
+                >
+                    <Connected />
+                </a>
                 :
                 connecting ?
                 <Loading  title='connecting'/>

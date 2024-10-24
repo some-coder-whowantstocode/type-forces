@@ -156,15 +156,18 @@ const Createroom: React.FC = () => {
                 popup.pushPopup("Room name must be between 4 - 20 letters");
                 return;
             }
-            let ntext = text.trim();
-            ntext = ntext.replace(/([./])/g, '$1 ');
-            ntext = ntext.replace(/\s+/g, ' ');
-            console.log(ntext)
-            if (ntext.length < 100) {
-                popup.pushPopup("Custom text can not be smaller than 20");
-                return;
+            let ntext = null;
+            if(givetext){
+                text.trim();
+                ntext = text.replace(/([./])/g, '$1 ');
+                ntext = ntext.replace(/\s+/g, ' ');
+                console.log(ntext)
+                if (ntext.length < 100) {
+                    popup.pushPopup("Custom text can not be smaller than 20");
+                    return;
+                }
             }
-            CreateGroup(name,roomname, roomlimit, type, ntext, duration);
+            CreateGroup(name,roomname, roomlimit, type, ntext, duration, numbers, symbols);
             reset();
         } catch (error) {
             console.log(error);
@@ -205,7 +208,7 @@ const Createroom: React.FC = () => {
             <UserLimit>
                 <p>Duration of each typing session</p>
                 <p>{duration}</p>
-                <Range min={20} max={120} setval={setduration} />
+                <Range min={20} max={1200} setval={setduration} />
             </UserLimit>
             <div>
                 <p>Select the type of room</p>
@@ -228,7 +231,7 @@ const Createroom: React.FC = () => {
             </div>
             <div></div>
             <div>
-                {/* <div>
+                <div>
                     <p>provide text</p>
                     <Privateroom>
                         <p
@@ -246,7 +249,7 @@ const Createroom: React.FC = () => {
                             }}
                         >Normal</p>
                     </Privateroom>
-                </div> */}
+                </div>
                 <Providetext>
                     {
                         givetext ?

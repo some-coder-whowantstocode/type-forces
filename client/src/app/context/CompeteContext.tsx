@@ -55,6 +55,7 @@ export const CompeteProvider : FC<{children:ReactNode}> =({children})=>{
                         break;
                     case "start":
                         setstate(competestate[1]);
+                        console.log(data.text)
                         settext(data.text);
                         setduration(data.duration);
                         break;

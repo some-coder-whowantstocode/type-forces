@@ -123,6 +123,30 @@ const Box = styled.div`
   }
 `
 
+const Me = styled.a`
+    position:fixed;
+        right:15px;
+        bottom:10px;
+        height:3rem;
+        width:3rem;
+        transition: 0.2s all;
+        font-weight: 600;
+        font-size: 1.3rem;
+        border-radius:50%;
+        color:white;
+        font-family:revert;
+        cursor:pointer;
+        background-color:green;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        text-decoration:None;
+        &:hover{
+          color: green;
+          background-color: white;
+        }
+`
+
 interface roomdata{
   roomname:string,
   id:number,
@@ -233,6 +257,15 @@ const Page: React.FC = () => {
           }
         </div>
       </Room>
+      {
+        rooms.length === 0 && 
+        <p
+        style={{
+          color:"white",
+          paddingTop:"10px"
+        }}
+        >No Rooms available currently try updating the list or may be create one...</p>
+      }
       {rooms.map(({ roomname, id, type, limit,mems },i) => (
         <Room
         key={id}
@@ -263,6 +296,10 @@ const Page: React.FC = () => {
       </Controls>
       </CompeteRoom>
       }
+      {/* <Me
+      >
+        Me
+      </Me> */}
     </CompetePage>
   );
 };
