@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import WaitingPage from './components/WaitingPage';
 import TypingPage from './components/TypingPage';
-import PostcompetePage from './components/PostcompetePage';
 import { useSocket } from '@/app/context/SocketContext';
 import { useRouter } from 'next/navigation';
 import { useCompete } from '@/app/context/CompeteContext';
@@ -68,7 +67,7 @@ interface mems{
     id:string
 }
 
-const page: React.FC<{mems:Array<mems>}> = (mems) => {
+const page: React.FC<{}> = () => {
     const {roomname, LeaveGroup, setroomid} = useSocket();
     const {reset, competestate, competestates} = useCompete();
     const router = useRouter();
@@ -94,9 +93,6 @@ const page: React.FC<{mems:Array<mems>}> = (mems) => {
             {
                 competestate === competestates[0] ?
                 <WaitingPage/>
-                :
-                competestate === competestates[1] ?
-                <PostcompetePage/>
                 :
                 <TypingPage/>
             }

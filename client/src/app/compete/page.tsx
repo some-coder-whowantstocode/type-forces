@@ -1,9 +1,9 @@
 'use client';
 import { SocketContextType, useSocket } from '../context/SocketContext';
 import styled from 'styled-components';
-import { usePopup } from '@vik_9827/popup';
+import Createroom from './component/Createroom';
+import { usePopup } from '@vik_9827/popup/dist/bundle.js';
 import { useEffect, useState } from 'react';
-import Createroom from './component/CreateRoom';
 
 const CompetePage = styled.div`
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;

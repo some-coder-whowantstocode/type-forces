@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import Range from './Range'
-import { usePopup } from '@vik_9827/popup';
+import { usePopup } from '@vik_9827/popup/dist/bundle.js';
 import { useSocket } from '@/app/context/SocketContext';
 
 
-const CreateRoom = styled.div`
+const ROOM = styled.div`
 
   width: 100vw;
   min-height: 100vh;
@@ -171,7 +171,7 @@ const Createroom: React.FC = () => {
         }
     }
     return (
-        <CreateRoom>
+        <ROOM>
             <Cancelcreate>
                 <button onClick={() => verify()}>create</button>
                 <button
@@ -276,7 +276,7 @@ const Createroom: React.FC = () => {
                     }
                 </Providetext>
             </div>
-        </CreateRoom>
+        </ROOM>
     )
 }
 

@@ -205,25 +205,6 @@ const WaitingPage = () => {
     const {members} = useSocket();
     const {chat, sendMessage, loading, startMatch} = useCompete()
     const [msg, setmessage] = useState("");
-    // const chat = [
-    //     {name:"lodu",message:"dsdoafjiasjdoid fdiaosjoi"},
-    //     {name:"lodu",message:"dsdoafjiasjdoid fdiaosjoi"},
-    //     {name:"lodu",message:"dsdoafjiasjdoid fdiaosjoi"},
-    //     {name:"lodu",message:"dsdoafjiasjdoid fdiaosjoi"},
-    //     {name:"lodu",message:"dsdoafjiasjdoid fdiaosjoi"},
-    //     {name:"lodu",message:"dsdoafjiasjdoid fdiaosjoi"},
-    //     {name:"lodu",message:"dsdoafjiasjdoid fdiaosjoi"},
-    //     {name:"lodu",message:"dsdoafjiasjdoid fdiaosjoi"},
-    //     {name:"lodu",message:"dsdoafjiasjdoid fdiaosjoi"},
-    //     {name:"lodu",message:"dsdoafjiasjdoid fdiaosjoi"},
-    //     {name:"lodu",message:"dsdoafjiasjdoid fdiaosjoi"},
-    //     {name:"lodu",message:"dsdoafjiasjdoid fdiaosjoi"},
-    //     {name:"lodu",message:"dsdoafjiasjdoid fdiaosjoi"},
-    //     {name:"lodu",message:"dsdoafdsanasdjfo iadsjfodasij foiasd jfoiadsjfoi adsjfoia sdofjadosif jadsoifj asdofjio fjiasjdoid fdiaosjoi"},
-    //     {name:"lodusdfaasdfds",message:"dsdoafjiasjdoid fdiaosjoi"},
-
-    // ]
-    const names = ["fsodfij","dsoaif",'dF',"fdajosias","dfioajdfos","adjsffasd","dasofjiasdif","aiosdfasdf","daoijfasdf" ,"aiosdfjfiasdjfoisdofsd","fsojs","foisdjansfsaiofjsodiajfoaisdnf"]
     return (
         <Page>
             <LeaderBoard>

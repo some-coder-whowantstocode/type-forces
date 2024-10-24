@@ -33,7 +33,7 @@ const Range : React.FC<{min:number, max:number, setval:Function}> = ({min , max,
             drag.current = false;
         }
 
-        const handlemove=(e)=>{
+        const handlemove=(e:MouseEvent )=>{
             try {
                 e.preventDefault();
                 if(!drag.current) return;
@@ -87,7 +87,7 @@ const Range : React.FC<{min:number, max:number, setval:Function}> = ({min , max,
             <div
             ref={ballref}
             draggable
-            onMouseDown={(e)=>{
+            onMouseDown={(e )=>{
                 drag.current= true;
                 e.preventDefault();
                 initpos.current.x = e.clientX;

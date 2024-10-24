@@ -17,7 +17,7 @@ export default function Home() {
     const checkIfPC = () => {
       const userAgent = navigator.userAgent;
       const mobileDevices = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
-      return !mobileDevices.test(userAgent)
+      return !mobileDevices.test(userAgent) && window.innerWidth > 300
     };
 
     if (!checkIfPC()) {

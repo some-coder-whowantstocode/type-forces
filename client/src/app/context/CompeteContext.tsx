@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useState, FC } from "react";
 import { memsinfo, useSocket } from "./SocketContext";
-import { usePopup } from '@vik_9827/popup';
+import { usePopup } from '@vik_9827/popup/dist/bundle.js';
 import { decrypt, encrypt, importPublicKey } from "@/lib/key";
 import { useRouter } from "next/router";
 
@@ -51,7 +51,7 @@ export const CompeteProvider : FC<{children:ReactNode}> =({children})=>{
                         }
                         break;
                     case "joinroom":
-                        setmems((prev : Array<memsinfo>) =>[...prev,data.newmem])
+                        setmems((prev :[]) =>[...prev,data.newmem])
                         pushPopup(data.message);
                         break;
                     case "start":
