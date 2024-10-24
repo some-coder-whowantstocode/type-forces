@@ -16,8 +16,9 @@ export default function Home() {
   useEffect(() => {
     const checkIfPC = () => {
       const userAgent = navigator.userAgent;
+      console.log(userAgent)
       const mobileDevices = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
-      return !mobileDevices.test(userAgent) && window.innerWidth > 300
+      return !mobileDevices.test(userAgent)
     };
 
     if (!checkIfPC()) {
