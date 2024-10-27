@@ -5,78 +5,82 @@ import { decrypt, encrypt, importPublicKey } from "@/lib/key";
 
 
 
-export interface Chat{
-    name:string,
-    message:string
+export interface Chat {
+    name: string,
+    message: string
 }
 
-export interface CompeteData{
-    sendMessage:Function;
-    competestate:string;
-    setstate:Function;
-    competestates:Array<string>;
-    chat:Array<Chat>;
-    startMatch:Function;
-    loading:boolean,
-    reset:Function,
-    text:string,
-    duration:number|null,
-    sendResult:Function,
-    setloading:Function
+export interface CompeteData {
+    sendMessage: Function;
+    competestate: string;
+    setstate: Function;
+    competestates: Array<string>;
+    chat: Array<Chat>;
+    startMatch: Function;
+    loading: boolean,
+    reset: Function,
+    text: string,
+    duration: number,
+    sendResult: Function,
+    setloading: Function
 }
 
 
-const Competecontext = createContext<CompeteData|undefined>(undefined);
+const Competecontext = createContext<CompeteData | undefined>(undefined);
 
-export const CompeteProvider : FC<{children:ReactNode}> =({children})=>{
+export const CompeteProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const competestates = ["init", "middle", "end"]
-    const {roomid, members, setmems, privatekey, myname} = useSocket();
-    const {connected, socket} = useSocket();
-    const {pushPopup} = usePopup();
+    const { roomid, members, setmems, privatekey, myname } = useSocket();
+    const { connected, socket } = useSocket();
+    const { pushPopup } = usePopup();
     const [chat, setchat] = useState<Array<Chat>>([]);
     const [competestate, setstate] = useState(competestates[0]);
     const [loading, setloading] = useState(false);
     const [text, settext] = useState("");
-    const [duration, setduration] = useState<number|null>(null);
+    const [duration, setduration] = useState<number >(0);
 
-    useEffect(()=>{
-        if(connected && roomid){
-            socket?.on(`${roomid}message`,async(data)=>{
+    useEffect(() => {
+        if (connected && roomid) {
+            socket?.on(`${roomid}message`, async (data) => {
                 switch (data.type) {
                     case "chat":
-                        if(privatekey){ 
-                            const message = await decrypt(data.text,privatekey)
-                            setchat((prev)=>[...prev,{message, name:data.name}]);
+                        if (privatekey) {
+                            const message = await decrypt(data.text, privatekey)
+                            setchat((prev) => [...prev, { message, name: data.name }]);
                         }
                         break;
                     case "joinroom":
-                        setmems((prev :[]) =>[...prev,data.newmem])
+                        const mems = [...members];
+                        mems.push(data.newmem);
+                        setmems(mems);
                         pushPopup(data.message);
                         break;
                     case "start":
                         setstate(competestate[1]);
-                        console.log(data.text)
                         settext(data.text);
                         setduration(data.duration);
                         break;
                     case "result":
                         {
-                            if(!data.id || !data.points) return;
-                            let arr = [...members];
-                            for(let i=0;i<arr.length;i++){
-                                if(arr[i].id === data.id){
-                                    arr[i].points = data.points;
-                                    break;
+                            if (!data.list) return;
+                            console.log(data.list)
+                            data.list.sort((a:memsinfo, b:memsinfo) => {
+                                if (a.points.w === b.points.w) {
+                                    if (a.points.r === b.points.r) {
+                                        return b.points.a - a.points.a; 
+                                    }
+                                    return b.points.r - a.points.r; 
                                 }
-                            }
-                            setmems(arr);
+                                return b.points.w - a.points.w; 
+                            });
+                            setmems(data.list);
                         }
                         break;
                     case "left":
                         let arr = [...members];
-                        for(let i=0;i<arr.length;i++){
-                            if(arr[i].name === data.member){
-                                arr.splice(i,1);
+                        for (let i = 0; i < arr.length; i++) {
+                            if (arr[i].name === data.member) {
+                                arr[i].active = false;
                                 break;
                             }
                         }
@@ -93,42 +97,42 @@ export const CompeteProvider : FC<{children:ReactNode}> =({children})=>{
                 reset();
             });
 
-            return ()=>{
+            return () => {
                 socket?.off(`${roomid}message`)
             }
         }
-    },[connected,roomid])
+    }, [connected, roomid,members])
 
-    const sendMessage =(msg:string)=>{
+    const sendMessage = (msg: string) => {
         try {
-            if(connected){
-                members.map(async({ publickey,id})=>{
-                    const pkey:CryptoKey  = await importPublicKey(publickey);
-                    const text = await encrypt(msg,pkey)
-                    socket?.emit(`roommessage`,{id:roomid,sid:id,text,name:myname});
-                
-            })
-        }
-        } catch (error) {
-            console.log(error);
-            pushPopup("something went wrong");
-        }
-        }
+            if (connected) {
+                members.map(async ({ publickey, id }) => {
+                    const pkey: CryptoKey = await importPublicKey(publickey);
+                    const text = await encrypt(msg, pkey)
+                    socket?.emit(`roommessage`, { id: roomid, sid: id, text, name: myname });
 
-    const sendResult =(wpm:number, raw_wpm:number, accuracy:number)=>{
-        try {
-            if(!connected) return;
-            socket?.emit(`matchend`,{id:roomid,wpm,raw:raw_wpm,accuracy});
+                })
+            }
         } catch (error) {
             console.log(error);
             pushPopup("something went wrong");
         }
     }
 
-    const startMatch =()=>{
+    const sendResult = (wpm: number, raw_wpm: number, accuracy: number) => {
         try {
-            if(connected){
-                socket?.emit(`startmatch`,{id:roomid});
+            if (!connected) return;
+            socket?.emit(`matchend`, { id: roomid, wpm, raw: raw_wpm, accuracy });
+        } catch (error) {
+            console.log(error);
+            pushPopup("something went wrong");
+        }
+    }
+
+    const startMatch = () => {
+        try {
+            if (connected) {
+                socket?.emit(`startmatch`, { id: roomid });
             }
             setloading(true);
         } catch (error) {
@@ -137,31 +141,31 @@ export const CompeteProvider : FC<{children:ReactNode}> =({children})=>{
         }
     }
 
-    const reset =()=>{
+    const reset = () => {
         setchat([]);
         setstate(competestates[0]);
         setloading(false);
         settext("");
     }
 
-    return(
+    return (
         <Competecontext.Provider
-        value={{
-            sendMessage,
-            competestate,
-            setstate,
-            competestates,
-            chat,
-            startMatch,
-            loading,
-            reset,
-            text,
-            duration,
-            sendResult,
-            setloading
-        }}
+            value={{
+                sendMessage,
+                competestate,
+                setstate,
+                competestates,
+                chat,
+                startMatch,
+                loading,
+                reset,
+                text,
+                duration,
+                sendResult,
+                setloading
+            }}
         >
-        {children}
+            {children}
         </Competecontext.Provider>
     )
 }

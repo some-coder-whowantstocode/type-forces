@@ -131,7 +131,7 @@ const Createroom: React.FC = () => {
     const [numbers, setnumbers] = useState(false);
     const [duration, setduration] = useState(20);
     const [text, settext] = useState("");
-    const [givetext, settxt] = useState(true);
+    const [givetext, settxt] = useState(false);
     const [name, setname] = useState("");
 
     const reset = () => {
@@ -234,6 +234,13 @@ const Createroom: React.FC = () => {
                 <div>
                     <p>provide text</p>
                     <Privateroom>
+                    <p
+                            onClick={() => settxt(false)}
+                            style={{
+                                color: `${!givetext ? '#00a6bf' : 'white'}`,
+                                border: `${!givetext ? ` 2px solid #00a6bf` : 'none'}`
+                            }}
+                        >Normal</p>
                         <p
                             onClick={() => settxt(true)}
                             style={{
@@ -241,13 +248,7 @@ const Createroom: React.FC = () => {
                                 border: `${givetext ? ` 2px solid #00a6bf` : 'none'}`
                             }}
                         >Custom</p>
-                        <p
-                            onClick={() => settxt(false)}
-                            style={{
-                                color: `${!givetext ? '#00a6bf' : 'white'}`,
-                                border: `${!givetext ? ` 2px solid #00a6bf` : 'none'}`
-                            }}
-                        >Normal</p>
+                       
                     </Privateroom>
                 </div>
                 <Providetext>

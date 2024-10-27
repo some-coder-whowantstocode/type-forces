@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import TypeWriter from '@vik_9827/type-writer/dist/bundle.js';
 import { useCompete } from '@/app/context/CompeteContext';
 import styled from 'styled-components';
@@ -10,6 +10,17 @@ const Tpage = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+`
+const Time = styled.div`
+  position: fixed;
+  top: 50px;
+  right: 10px;
+  color: white;
+  font-size: 1.3rem;
+  font-weight: 600;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  letter-spacing: 3px;
+  z-index: 99999999999;
 `
 
 interface typedata {
@@ -25,15 +36,28 @@ const TypingPage = () => {
     setloading(false)
     sendResult(data.wpm, data.raw_wpm, data.accuracy)
   }
+  const [time, settime]= useState<number>(duration);
+
+  useEffect(()=>{
+    const timeid = setTimeout(() => {
+      settime(prev=>prev-1);
+    }, 1000);
+
+    return()=>{
+      clearTimeout(timeid);
+    }
+  },[])
+
   return (
     <Tpage>
+      {/* <Time>{time}</Time> */}
       <TypeWriter
         custommode={true}
         custominput={text}
         customStyle={{}}
         setdata={data}
         repetation={duration || 20}
-        auto={true}
+        // auto={true}
       />
     </Tpage>
   )

@@ -1,11 +1,12 @@
 import { useCompete } from '@/app/context/CompeteContext'
 import { useSocket } from '@/app/context/SocketContext'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 interface leaderboardprops{
-    num:number
+    num:number,
+    bg:boolean
 }
 
 interface btn{
@@ -107,7 +108,7 @@ const LeaderBoard = styled.div`
 `
 
 const LeaderBoardName = styled.div<leaderboardprops>`
-    background-color: #fdfdfd;
+    background-color: ${props => (props.bg ? 'gray' : 'white')};
     color: black;
     margin: 1rem 0.5rem;
     padding: 0.5rem 0.3rem;
@@ -202,23 +203,37 @@ const Message = styled.div`
 
 
 const WaitingPage = () => {
-    const {members, connected} = useSocket();
+    const {members, connected, myname} = useSocket();
     const {chat, sendMessage, loading, startMatch} = useCompete()
     const [msg, setmessage] = useState("");
+
+
+
     return (
         <Page>
             <LeaderBoard>
                 <h3>LeaderBoard</h3>
                 <div>
                 {
-                        members.map(({name, points},i)=>(
+                        members.map(({name, points,active},i)=>(
                             <LeaderBoardName 
+                            bg={myname===name}
                             num={i}
                             key={i}
                             >
                                 <span>{i+1}</span>
-                                <div>{name}</div>
-                                <p>{points}</p>
+                                
+                                <div
+                                >{name}</div>
+                                <p>{points.w}</p>
+                                <p
+                                style={{
+                                    backgroundColor:`${active ? '#32CD32' : "#ff0000"}`,
+                                    height:'0.5rem',
+                                    width:'0.5rem',
+                                    borderRadius:"50%"
+                                }}
+                                ></p>
                             </LeaderBoardName>
                         ))
                     }

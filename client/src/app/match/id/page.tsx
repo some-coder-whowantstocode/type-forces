@@ -62,11 +62,6 @@ const CompetePage = styled.div`
     }
 `
 
-interface mems {
-    name: string,
-    id: string
-}
-
 const page: React.FC<{}> = () => {
     const { roomname, LeaveGroup, setroomid, connected } = useSocket();
     const { reset, competestate, competestates } = useCompete();
@@ -85,10 +80,6 @@ const page: React.FC<{}> = () => {
             router.replace('/');
         }
     }, []);
-
-    useEffect(() => {
-        console.log(competestate)
-    }, [competestate])
 
     return (
         <CompetePage>

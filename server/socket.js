@@ -1,17 +1,19 @@
 const { io } = require(".");
-const { createRoom, getrooms, joinroom, sendmessage, startMatch, leaveroom, matchend } = require("./Room methods");
+const { createRoom, getrooms, joinroom, sendmessage, startMatch, leaveroom, matchend, updatematch } = require("./Room methods");
 
 
 
 if(!io){
-    return
+    return;
 }
 io.on('connection', async(socket) => {
     console.log('user connected')
     try {
         socket.on('roommessage',(message)=>{
             sendmessage(message, socket);
-            
+        })
+        socket.on('updatematch',(data)=>{
+            updatematch(data,socket)
         })
         socket.on('startmatch', (data)=>{
             startMatch(data, socket);

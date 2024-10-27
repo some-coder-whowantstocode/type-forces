@@ -111,11 +111,6 @@ const layout : React.FC<LayoutProps> = ({children}) => {
     },[])
 
     useEffect(()=>{
-        console.log(connected)
-    },[connected])
-
-
-    useEffect(()=>{
         try {
             const providelocation =()=>{
                 if(!locationbgref.current || !locationref.current || path !== locations[currentPage]?.location) return;

@@ -43,8 +43,9 @@ export interface SocketContextType {
 export interface memsinfo {
     name: string;
     publickey: JsonWebKey;
-    points: number;
+    points: {w:number,r:number,a:number};
     id: string;
+    active: boolean;
 }
 
 const SocketContext = createContext<SocketContextType | undefined>(undefined);

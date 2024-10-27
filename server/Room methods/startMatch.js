@@ -7,38 +7,27 @@ module.exports.startMatch =async(data, socket)=>{
         if(!data.id ){
             const err = { type: 'error', error: 'Something went wrong' };
             socket.send(err);
+            return;
         }
         const {room} = findRoom(data);
         if(!room){
             const err = { type: 'error', error: 'Something went wrong' };
             socket.send(err);
+            return;
         }
         const rdata = ROOM_DETAILS.get(room.id);
         for(let i=0;i<rdata.memslist.length;i++){
             const mem= rdata.memslist[i];
             const id = mem.id;
             if(id === socket.id){
-                if(!mem.ready){
-                    rdata.ready +=1;
-                    if(rdata.ready === rdata.mems){
-                        let text = rdata.text;
-                        if(!rdata.text){
-                            text = await generateText(rdata.numbers, rdata.symbols, 100);
-                            console.log(rdata.numbers);
-                        }
-                        io.to(data.id).emit(`${data.id}message`,{type:"start",text:text, duration:rdata.duration});
-                    }
-                }else{
-                    rdata.ready -=1;
-                }
-                mem.ready = true;
+                text = await generateText(rdata.numbers, rdata.symbols, 100);
+                socket.emit(`${data.id}message`,{type:"start",text:text, duration:rdata.duration});
                 rdata.memslist[i] = mem;
                 break;
             }
             
         }
         ROOM_DETAILS.set(room.id,rdata);
-        socket.send({type:'error',error:"Waiting for others...."})
     } catch (error) {
         console.error(error);
         const err = { type: 'error', error: 'Something went wrong' };

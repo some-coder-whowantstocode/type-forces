@@ -21,10 +21,9 @@ module.exports.createRoom =(data, socket)=>{
             numbers:data.numbers || false,
             symbols:data.numbers || false,
             mems: 1, 
-            ready:0,
-            memslist:[{name:data.name, id:socket.id, publickey:data.publickey, points:0, ready:false}] });
+            memslist:[{name:data.name, id:socket.id, publickey:data.publickey, points:{w:0,r:0,a:0}, active:true}] });
         socket.join(id);
-        socket.send({ type:"CREATEROOM",roomtype: data.type, message: "Room created successfully.", roomname:data.roomname, id, memslist:[{name:data.name, id:socket.id, publickey:data.publickey, points:0}] });
+        socket.send({ type:"CREATEROOM",roomtype: data.type, message: "Room created successfully.", roomname:data.roomname, id, memslist:[{name:data.name, id:socket.id, publickey:data.publickey,  points:{w:0,r:0,a:0}, active:true}] });
         
     } catch (error) {
         console.error(error);

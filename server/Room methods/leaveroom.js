@@ -19,15 +19,12 @@ module.exports.leaveroom =(data, socket)=>{
             const {memslist} = rdata;
             for(let i=0;i<memslist.length;i++){
                 if(memslist[i].id === socket.id){
-                    if(memslist.ready){
-                        rdata.ready -=1;
-                    }
-                    name = memslist[i].name;
+                    
+                    memslist[i].active = false;
+                    memslist[i].id = null;
+                    memslist[i].publickkey = null;
+                    name = memslist[i].name
                     rdata.mems -=1;
-                    if(rdata.ready === rdata.mems){
-                        io.to(data.id).emit(`${data.id}message`,{type:"start",text:rdata.text, duration:rdata.duration});
-                    }
-                    memslist.splice(i,1);
                     break;
                 }
             }

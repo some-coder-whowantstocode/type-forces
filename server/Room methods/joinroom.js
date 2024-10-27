@@ -22,6 +22,7 @@ module.exports.joinroom =(data, socket)=>{
             socket.send(err);
             return ;
         }
+        
          // if alredy exists
         const rdata = ROOM_DETAILS.get(room.id);
         for(let i=0;i<rdata.memslist.length ;i++){
@@ -36,10 +37,10 @@ module.exports.joinroom =(data, socket)=>{
         ROOMS_ID[pos] = room;
         
         rdata.mems += 1;
-        rdata.memslist.push({name:data.name, id:socket.id, publickey:data.publickey, points:0,ready:false});
+        rdata.memslist.push({name:data.name, id:socket.id, publickey:data.publickey, points:{w:0,r:0,a:0},active:true});
         ROOM_DETAILS.set(room.id, rdata);
         socket.join(room.id);
-        io.to(room.id).emit(`${room.id}message`,{type:"joinroom",message:data.name+' Joined room', newmem:{name:data.name, id:socket.id, publickey:data.publickey, points:0}} );
+        io.to(room.id).emit(`${room.id}message`,{type:"joinroom",message:data.name+' Joined room', newmem:{name:data.name, id:socket.id, publickey:data.publickey, points:{w:0,r:0,a:0},active:true}} );
         socket.send({type:"JOINROOM",roomtype: room.type, message: "Room joined successfully.",duration:data.duration,name:data.name, roomname:rdata.roomname, id:room.id, members:rdata.memslist});
     } catch (error) {
         console.error(error);
