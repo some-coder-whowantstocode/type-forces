@@ -2,12 +2,14 @@ import competeRequest from "@/lib/models/compete/competerequest";
 import { NextResponse } from "next/server";
 import Competes, { competetype } from "@/lib/models/compete/competes";
 import dbConnect from "@/lib/mongodb";
+import { LinearCongruentialGenerator } from "@/lib/lineargradientgenerator";
 
 
 
 
 export async function POST(request:Request){
     try {
+        
         const body : competeRequest = await request.json();
         const code = LinearCongruentialGenerator(Date.now());
         const competetiondata = new Date(body.time);
