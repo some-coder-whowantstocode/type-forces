@@ -191,7 +191,7 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                         router.replace(`/match/id`);
                         setmems(data.memslist);
                         setroomid(data.id);
-                        pushPopup(data.message);
+                        // pushPopup(data.message);
                         setmyname(data.memslist[0].name);
                         setroomname(data.roomname);
                         break;
@@ -199,7 +199,7 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                         router.replace(`/match/id`);
                         setroomid(data.id);
                         setmems(data.members);
-                        pushPopup(data.message);
+                        // pushPopup(data.message);
                         setmyname(data.name);
                         setroomname(data.roomname);
                         break;

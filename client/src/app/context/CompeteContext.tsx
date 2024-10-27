@@ -53,7 +53,7 @@ export const CompeteProvider: FC<{ children: ReactNode }> = ({ children }) => {
                         const mems = [...members];
                         mems.push(data.newmem);
                         setmems(mems);
-                        pushPopup(data.message);
+                        // pushPopup(data.message);
                         break;
                     case "start":
                         setstate(competestate[1]);
@@ -63,7 +63,7 @@ export const CompeteProvider: FC<{ children: ReactNode }> = ({ children }) => {
                     case "result":
                         {
                             if (!data.list) return;
-                            console.log(data.list)
+                            // console.log(data.list)
                             data.list.sort((a:memsinfo, b:memsinfo) => {
                                 if (a.points.w === b.points.w) {
                                     if (a.points.r === b.points.r) {
@@ -85,7 +85,7 @@ export const CompeteProvider: FC<{ children: ReactNode }> = ({ children }) => {
                             }
                         }
                         setmems(arr);
-                        pushPopup(data.message);
+                        // pushPopup(data.message);
                         break;
                     default:
                         console.log(data)
