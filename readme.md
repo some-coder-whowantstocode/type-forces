@@ -2,6 +2,8 @@
 
 Type Forces is an interactive web application that allows users to compete in typing challenges. Built using modern web technologies and real-time communication with WebSocket, it provides an engaging and competitive experience.
 
+live link : https://type-forces.onrender.com
+
 ## Getting Started
 
 ### Prerequisites
