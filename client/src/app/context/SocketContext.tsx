@@ -38,6 +38,7 @@ export interface SocketContextType {
     setroomid: Function;
     connecting: boolean;
     wakeup: Function;
+    inroom:boolean
 }
 
 export interface memsinfo {
@@ -64,6 +65,7 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     const router = useRouter();
     const [myname, setmyname] = useState("");
     const [roomname, setroomname] = useState("");
+    const [inroom, setloc] = useState(false);
 
     const wakeup = async () => {
         try {
@@ -194,12 +196,14 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                         // pushPopup(data.message);
                         setmyname(data.memslist[0].name);
                         setroomname(data.roomname);
+                        setloc(true);
                         router.replace(`/match/id`);
                         break;
                     case 'JOINROOM':
                         setroomid(data.id);
                         setmems(data.members);
                         // pushPopup(data.message);
+                        setloc(true);
                         setmyname(data.name);
                         setroomname(data.roomname);
                         router.replace(`/match/id`);
@@ -250,7 +254,7 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
     const LeaveGroup = () => {
         try {
-            
+            setloc(false);
         if (!connected) return;
         if (socketRef.current && roomid && myname) {
             socketRef.current.emit('LEAVEROOM', { id: roomid, name: myname });
@@ -288,7 +292,7 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
     return (
         <SocketContext.Provider value={{
-            setroomid, roomname, myname, setmyname, members, setmems, socket: socketRef.current, connecting, wakeup,
+            setroomid, roomname, myname, setmyname, members, setmems, socket: socketRef.current, connecting, wakeup,inroom,
             connected, JoinGroup, LeaveGroup, CreateGroup, sendResult, getGroups, rooms, create, setcreate, privatekey, publickey, roomid
         }}>
             {children}
