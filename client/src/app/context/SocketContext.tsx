@@ -186,6 +186,7 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         if (connected) {
             const handleMessage = (data: any) => {
                 try {
+                    console.log(data);
                 switch (data.type) {
                     case 'error':
                         pushPopup(data.error);
@@ -193,14 +194,12 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                     case 'CREATEROOM':
                         setmems(data.memslist);
                         setroomid(data.id);
-                        // pushPopup(data.message);
                         setmyname(data.memslist[0].name);
                         setroomname(data.roomname);
                         setloc(true);
                         router.replace(`/match/id`);
                         break;
                     case 'JOINROOM':
-                        console.log(data.members)
                         setroomid(data.id);
                         setmems(data.members);
                         // pushPopup(data.message);

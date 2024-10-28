@@ -22,7 +22,7 @@ module.exports.leaveroom =(data, socket)=>{
                     
                     memslist[i].active = false;
                     memslist[i].id = null;
-                    memslist[i].publickkey = null;
+                    memslist[i].publickey = null;
                     name = memslist[i].name
                     rdata.mems -=1;
                     break;

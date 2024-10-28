@@ -296,10 +296,6 @@ const Page: React.FC = () => {
       </Controls>
       </CompeteRoom>
       }
-      {/* <Me
-      >
-        Me
-      </Me> */}
     </CompetePage>
   );
 };
