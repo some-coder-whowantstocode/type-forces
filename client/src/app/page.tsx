@@ -24,7 +24,7 @@ export default function Home() {
       setIsPC(false);
     } else {
       if (!router) return;
-      router.replace("/compete");
+      router.replace("/practice");
     }
   }, [router]);
 

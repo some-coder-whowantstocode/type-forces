@@ -186,7 +186,6 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         if (connected) {
             const handleMessage = (data: any) => {
                 try {
-                    console.log(data);
                 switch (data.type) {
                     case 'error':
                         pushPopup(data.error);

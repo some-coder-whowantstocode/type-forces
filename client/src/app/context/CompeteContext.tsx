@@ -42,7 +42,6 @@ export const CompeteProvider: FC<{ children: ReactNode }> = ({ children }) => {
     useEffect(() => {
         if (connected && roomid) {
             socket?.on(`${roomid}message`, async (data) => {
-                console.log(data)
                 try {
                     
                 switch (data.type) {
