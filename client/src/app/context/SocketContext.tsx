@@ -183,6 +183,7 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     useEffect(() => {
         if (connected) {
             const handleMessage = (data: any) => {
+                try {
                 switch (data.type) {
                     case 'error':
                         pushPopup(data.error);
@@ -197,7 +198,6 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                         break;
                     case 'JOINROOM':
                         setroomid(data.id);
-                        console.log(data.members)
                         setmems(data.members);
                         // pushPopup(data.message);
                         setmyname(data.name);
@@ -210,6 +210,9 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                     default:
                         console.log("Unknown message type:", data.type);
                 }
+            } catch (error) {
+                console.log(error)
+            }
             };
 
             socketRef.current?.on('message', handleMessage);
@@ -220,40 +223,65 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }, [connected, pushPopup, router]);
 
     const JoinGroup = (id: number, name: string, code: number) => {
+        try {
+            
         if (!connected) return;
         if (socketRef.current) {
             socketRef.current.emit('JOINROOM', { id, name, code, publickey });
         }
+    } catch (error) {
+        console.log(error)
+    }
     };
 
     const CreateGroup = (name: string, roomname: string, limit: number, type: string, text: string|null, duration: number,numbers:boolean, symbols:boolean) => {
+        try {
+            
         if (!connected) return;
         if (socketRef.current) {
             const code = LinearCongruentialGenerator(Date.now());
             const data = { name, roomname, limit, type, code, publickey, text, duration, numbers, symbols };
             socketRef.current.emit('CREATEROOM', data);
         }
+    } catch (error) {
+        console.log(error)
+    }
     };
 
     const LeaveGroup = () => {
+        try {
+            
         if (!connected) return;
         if (socketRef.current && roomid && myname) {
             socketRef.current.emit('LEAVEROOM', { id: roomid, name: myname });
         }
+    } catch (error) {
+        console.log(error)
+    }
     };
 
     const sendResult = (wpm: number) => {
+        try {
+            
         if (!connected) return;
         if (socketRef.current) {
             socketRef.current.emit('WPM', { wpm });
         }
+    } catch (error) {
+        console.log(error)
+    }
     };
 
     const getGroups = () => {
+        try {
+            
         if (!connected) return;
         if (socketRef.current) {
             socketRef.current.emit('GETROOMS');
         }
+    } catch (error) {
+        console.log(error)
+    }
     };
 
 

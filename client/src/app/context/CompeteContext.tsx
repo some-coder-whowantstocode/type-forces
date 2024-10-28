@@ -42,6 +42,8 @@ export const CompeteProvider: FC<{ children: ReactNode }> = ({ children }) => {
     useEffect(() => {
         if (connected && roomid) {
             socket?.on(`${roomid}message`, async (data) => {
+                try {
+                    
                 switch (data.type) {
                     case "chat":
                         if (privatekey) {
@@ -53,7 +55,6 @@ export const CompeteProvider: FC<{ children: ReactNode }> = ({ children }) => {
                         const mems = [...members];
                         mems.push(data.newmem);
                         setmems(mems);
-                        // pushPopup(data.message);
                         break;
                     case "start":
                         setstate(competestate[1]);
@@ -63,7 +64,6 @@ export const CompeteProvider: FC<{ children: ReactNode }> = ({ children }) => {
                     case "result":
                         {
                             if (!data.list) return;
-                            // console.log(data.list)
                             data.list.sort((a:memsinfo, b:memsinfo) => {
                                 if (a.points.w === b.points.w) {
                                     if (a.points.r === b.points.r) {
@@ -85,12 +85,14 @@ export const CompeteProvider: FC<{ children: ReactNode }> = ({ children }) => {
                             }
                         }
                         setmems(arr);
-                        // pushPopup(data.message);
                         break;
                     default:
                         console.log(data)
                         break;
                 }
+            } catch (error) {
+                console.log(error)
+            }
             })
 
             socket?.on('disconnect', () => {
@@ -99,6 +101,7 @@ export const CompeteProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
             return () => {
                 socket?.off(`${roomid}message`)
+                socket?.off('disconnect')
             }
         }
     }, [connected, roomid,members])
