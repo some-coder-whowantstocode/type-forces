@@ -27,7 +27,7 @@ module.exports.joinroom =(data, socket)=>{
         const rdata = ROOM_DETAILS.get(room.id);
         for(let i=0;i<rdata.memslist.length ;i++){
             const tempmem = rdata.memslist[i];
-            if(tempmem.name === data.name || tempmem.id === socket.id ){
+            if((tempmem.name === data.name || tempmem.id === socket.id) && tempmem.active ){
                 const err = { type: 'error', error: 'User alredy exists in this room.' };
                 socket.send(err);
                 return;

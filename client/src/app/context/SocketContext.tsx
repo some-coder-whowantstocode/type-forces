@@ -188,20 +188,21 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                         pushPopup(data.error);
                         break;
                     case 'CREATEROOM':
-                        router.replace(`/match/id`);
                         setmems(data.memslist);
                         setroomid(data.id);
                         // pushPopup(data.message);
                         setmyname(data.memslist[0].name);
                         setroomname(data.roomname);
+                        router.replace(`/match/id`);
                         break;
                     case 'JOINROOM':
-                        router.replace(`/match/id`);
                         setroomid(data.id);
+                        console.log(data.members)
                         setmems(data.members);
                         // pushPopup(data.message);
                         setmyname(data.name);
                         setroomname(data.roomname);
+                        router.replace(`/match/id`);
                         break;
                     case 'GETROOMS':
                         setRooms(data.rooms);
