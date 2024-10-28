@@ -200,6 +200,7 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                         router.replace(`/match/id`);
                         break;
                     case 'JOINROOM':
+                        console.log(data.members)
                         setroomid(data.id);
                         setmems(data.members);
                         // pushPopup(data.message);
